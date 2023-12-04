@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { WeatherService } from './service/weather.service';
 import { WeatherDatas } from 'src/app/models/interfaces/WeatherDatas';
+import { Subject, takeUntil } from 'rxjs';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 
 @Component({
@@ -8,19 +10,23 @@ import { WeatherDatas } from 'src/app/models/interfaces/WeatherDatas';
   templateUrl: './weather-home.component.html',
   styleUrls: [],
 })
-export class WeatherHomeComponent implements OnInit {
+export class WeatherHomeComponent implements OnInit, OnDestroy {
+  private readonly destroy$: Subject<void> = new Subject();
   initialCityName = 'São Paulo';
   weatherDatas!: WeatherDatas;
+  searchIcon = faMagnifyingGlass;
 
 
   constructor(private weatherService: WeatherService) {}
-
-  ngOnInit(): void {
-    this.getWheatherDatas(this.initialCityName);
+  ngOnDestroy(): void {
+    throw new Error('Method not implemented.');
   }
 
+
   getWheatherDatas(cityName: string): void {
-    this.weatherService.getWeatherDatas(cityName).subscribe({
+    this.weatherService.getWeatherDatas(cityName)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (response) => {
         response && (this.weatherDatas = response);
         console.log(this.weatherDatas)
@@ -28,4 +34,18 @@ export class WeatherHomeComponent implements OnInit {
       error: (error) => console.log(error),
     });
   }
+
+  onSubmit(): void {
+    this.getWheatherDatas(this.initialCityName);
+    console.log("Chamou a função");
+    this.initialCityName = '';
+  }
+
+  ngOnInit(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+
+
 }
