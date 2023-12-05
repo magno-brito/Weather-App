@@ -8,12 +8,14 @@ import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { WeatherHomeComponent } from './weather/page/weather-home/weather-home/weather-home.component';
+import { WeatherCardComponent } from './weather/component/weather-card/weather-card.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    WeatherHomeComponent
+    WeatherHomeComponent,
+    WeatherCardComponent
   ],
   imports: [
     BrowserModule,
